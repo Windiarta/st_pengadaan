@@ -9,6 +9,7 @@ def get_inputs(data, nomor_po, index=0):
     #----------------- VAR INIT ------------------#
     #=============================================#
     if data is not None:
+        id = data["ID"][index]
         date_val = data["PR Month"][index]
         material_val = data["Material/Services"][index]
         tender_val = data["Status Tender"][index]
@@ -37,6 +38,7 @@ def get_inputs(data, nomor_po, index=0):
         cumulative_val = data["Cumulative FR"][index]
         ir_val = data["IR Realization"][index]
         a_val = data["A"][index]
+        st.write(data)
     else:
         st.warning("Tidak ada data, Isi untuk menginput data baru")
         date_val = today
@@ -51,8 +53,8 @@ def get_inputs(data, nomor_po, index=0):
         eproc_val = eproc_option["M"][0]
         dur_val = ""
         sap_val = sap_option["M"][0]
-        user_val = None
-        vendor_val = None
+        user_val = user_option["M"][0]
+        vendor_val = 'NONE'
         deliv_val = ""
         status_val = ""
         penalty_val = ""
@@ -171,6 +173,8 @@ def get_inputs(data, nomor_po, index=0):
 
     st.divider()
     st.header("SLA")
+    # if "RETENDER" in tender:
+    #     st.selectbox("Retender Start From", ["Created SR/MR", "PR Verified", "Izin Prinsip"])
     if data is not None:
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -215,15 +219,20 @@ def get_inputs(data, nomor_po, index=0):
     if data is not None:
         update = st.button("Update")
         if update :
-            updateData(selected_date)
-    else :
-        create = st.button("Create")
-        if create:
-            insertData(selected_date, material_service, item_name, ka, rkap,
+            updateDataSLA(
+                id, selected_date, material_service, item_name, ka, rkap,
                         tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
                         po_sched, po_released, eta, bast, delivtime, penalty, nomor_po, oe, 
                         pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
-                        ir, a)
-            insertSLA(selected_date, material_service, tender, sr_mr, pr_verif, 
-                      izin_prinsip, rfq, offer, tbe, nego, final_harga, rekomendasi, 
-                      awarding, pook, actualday, workday, slastat, remarks)
+                        ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
+                        awarding, actualday, slastat, remarks)
+    else :
+        create = st.button("Create")
+        if create:
+            insertDataSLA(
+                selected_date, material_service, item_name, ka, rkap,
+                        tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
+                        po_sched, po_released, eta, bast, delivtime, penalty, nomor_po, oe, 
+                        pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
+                        ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
+                        awarding, actualday, slastat, remarks)

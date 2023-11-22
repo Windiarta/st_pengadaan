@@ -2,7 +2,7 @@ import streamlit as st
 from data.getItemData import *
 from components.custom import *
 from components.input import *
-        
+
 header()
 
 col1, col2 = st.columns([1, 2])
@@ -13,6 +13,7 @@ if nomor_po == "":
     st.error("Nomor PO tidak boleh kosong!")
 else :
     data = getItemDetailByPO(nomor_po)
+    
     if data.shape[0] == 1:
         get_inputs(data, nomor_po)
     elif(data.shape[0] > 1):
