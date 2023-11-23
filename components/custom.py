@@ -12,10 +12,10 @@ def header():
     with col2:
         st.title("PRODA")
 
-def getDate(label, date = None):
+def getDate(label, date = None, disabled = False):
     if date is not None:
-        box = st.checkbox(label, True)
-        selected = st.date_input(label, date, label_visibility="collapsed", disabled=not box)
+        box = st.checkbox(label, True, disabled=disabled)
+        selected = st.date_input(label, date, label_visibility="collapsed", disabled=disabled or not box)
         if box:
             return selected
         else :

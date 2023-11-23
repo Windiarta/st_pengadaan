@@ -1,27 +1,27 @@
 import streamlit as st
 from data.getItemData import *
-from components.custom import *
-from components.input import *
+from components.inputpo import *
 
 header()
 
-col1, col2 = st.columns([1, 2])
-with col1 : source = st.selectbox("Data Source", ["SAP", "PADI", "SIMONA", "Manual"])
-with col2 : nomor_po = st.text_input("No. PO/OK", value="5900000489")
-
-if nomor_po == "":
-    st.error("Nomor PO tidak boleh kosong!")
+nomor = st.text_input("No. PO/OK Atau No. PR Atau No. SR/MR", value="6/MR-PIE/II/2021")
+if nomor == "":
+    st.error("Nomor PO/OK Atau PR Atau SR/MR tidak boleh kosong!")
 else :
-    data = getItemDetailByPO(nomor_po)
+    with st.spinner("Loading Data"):
+        data = getItemDetail(nomor)
+        st.write(data)
+        data = getItemDetailFromData(nomor)
+        st.write(data)
     
     if data.shape[0] == 1:
-        get_inputs(data, nomor_po)
+        get_inputs(data, nomor)
     elif(data.shape[0] > 1):
         st.write(data)
         index = st.selectbox("Index", range(0, data.shape[0]))
-        get_inputs(data, nomor_po, index)
+        get_inputs(data, nomor, index)
     else :
-        get_inputs(None, nomor_po)
-
+        get_inputs(None, nomor)
+        
 
 
