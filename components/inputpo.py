@@ -2,16 +2,30 @@ import streamlit as st
 from data.const import *
 from data.sendData import *
 from components.custom import *
-from data.getItemDetail import get_data_index
+from data.getItemDetail import *
 
 
-def get_inputs(data, nomor_po, index=0, source="Manual"):
+def get_inputs(data, datasimona, index=0, indexsimona=0):
     #=============================================#
     #----------------- VAR INIT ------------------#
     #=============================================#
-    if source == "Manual":
-        id, date_val, material_val, tender_val, item, ka_val, rkap_val, tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val, vendor_val, status_val, deliv_val, penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, other2_val, file_loc_val, forecast_val, cumulative_val, ir_val, a_val = get_data_index(data, index)
 
+    # SET DEFAULT VALUE
+    if datasimona is not None:
+        no_mr_sr = datasimona["NO_MR_SR"][0]
+        no_pr = datasimona["NO_PR"][0]
+        no_po = datasimona["NO_PO"][0]
+    else:
+        no_mr_sr = None
+        no_pr = None
+        if data is not None:
+            no_po = data["No. PO/OK"][0]
+        else :
+            no_po = None
+    
+    # Code dibawah ini berfungsi untuk mengassign data simona dan data
+    id, date_val, material_val, tender_val, item, ka_val, rkap_val, tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val, vendor_val, status_val, deliv_val, penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, other2_val, file_loc_val, forecast_val, cumulative_val, ir_val, a_val = get_data_index(data, datasimona, index, indexsimona)
+    
     #=============================================#
     #------------------- DATA --------------------#
     #=============================================#
@@ -20,6 +34,11 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
         st.header("DATA")
 
         item_name = st.text_input("Item", item, placeholder="Item Name")
+
+        col1, col2, col3 = st.columns(3)
+        col1.text_input("No. MR/SR", no_mr_sr, disabled=True)
+        col2.text_input("No. PR", no_pr, disabled=True)
+        col3.text_input("No. PO/OK", no_po, disabled=True)
 
         col1, col2 = st.columns([1, 2])
         with col1: 
@@ -112,6 +131,7 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
     #===========================================#
     #------------------- SLA -------------------#
     #===========================================#
+
     with st.spinner("Loading SLA"):
         st.divider()
         st.header("SLA")
@@ -121,15 +141,15 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
         if data is not None:
             col1, col2, col3 = st.columns(3)
             with col1:
-                sr_mr = getDate("1 Created SR/MR", data["Created SR/MR"][0], disabled=True)
+                sr_mr = getDate("1 Created SR/MR", datasimona["Created SR/MR"][0], disabled=True)
                 rfq = getDate("4 RFQ", data["RFQ"][0])
                 nego = getDate("7 Klarifikasi & Negosiasi", data["Klarifikasi & Negosiasi"][0])
                 awarding = getDate("10 Awarding", data["Awarding"][0])
             with col2:
-                pr_verif = getDate("2 PR Verified by Daan", data["PR Verified by Daan"][0], disabled=True)
+                pr_verif = getDate("2 PR Verified by Daan", datasimona["PR Verified by Daan"][0], disabled=True)
                 offer = getDate("5 Penawaran Diterima", data["Penawaran diterima"][0])
                 final_harga = getDate("8 Final Harga", data["Final Harga"][0])
-                pook = getDate("11 PO/OK", data["PO_OK_SLA"][0], disabled=True)
+                pook = getDate("11 PO/OK", datasimona["PO_OK_SLA"][0], disabled=True)
             with col3:
                 izin_prinsip = getDate("3 Izin Prinsip", data["Izin Prinsip"][0])
                 tbe = getDate("6 TBE Diterima", data["TBE diterima"][0])
@@ -137,15 +157,24 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
         else:
             col1, col2, col3 = st.columns(3)
             with col1:
-                sr_mr = getDate("1 Created SR/MR")
+                if datasimona is not None:
+                    sr_mr = getDate("1 Created SR/MR", datasimona["Created SR/MR"][0], disabled=True)
+                else:
+                    sr_mr = getDate("1 Created SR/MR")
                 rfq = getDate("4 RFQ")
                 nego = getDate("7 Klarifikasi & Negosiasi")
                 awarding = getDate("10 Awarding")
             with col2:
-                pr_verif = getDate("2 PR Verified by Daan")
+                if datasimona is not None:
+                    pr_verif = getDate("2 PR Verified by Daan", datasimona["PR Verified by Daan"][0], disabled=True)
+                else:
+                    pr_verif = getDate("2 PR Verified by Daan")
                 offer = getDate("5 Penawaran Diterima")
                 final_harga = getDate("8 Final Harga")
-                pook = getDate("11 PO/OK")
+                if datasimona is not None:
+                    pook = getDate("11 PO/OK", datasimona["PO_OK_SLA"][0], disabled=True)
+                else :
+                    pook = getDate("11 PO/OK")
             with col3:
                 izin_prinsip = getDate("3 Izin Prinsip")
                 tbe = getDate("6 TBE Diterima")
@@ -163,7 +192,7 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
                 updateDataSLA(
                     id, selected_date, material_service, item_name, ka, rkap,
                             tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
-                            po_sched, po_released, eta, bast, delivtime, penalty, nomor_po, oe, 
+                            po_sched, po_released, eta, bast, delivtime, penalty, no_po, oe, 
                             pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
                             ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
                             awarding, actualday, slastat, remarks)
@@ -173,7 +202,7 @@ def get_inputs(data, nomor_po, index=0, source="Manual"):
                 insertDataSLA(
                     selected_date, material_service, item_name, ka, rkap,
                             tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
-                            po_sched, po_released, eta, bast, delivtime, penalty, nomor_po, oe, 
+                            po_sched, po_released, eta, bast, delivtime, penalty, no_po, oe, 
                             pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
                             ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
                             awarding, actualday, slastat, remarks)
