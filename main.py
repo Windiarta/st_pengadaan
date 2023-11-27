@@ -10,42 +10,49 @@ header()
 #             STEP 1: Ambil Nomor             #
 #=============================================#
 def show_form():
-    nomor = st.text_input("No. PO/OK Atau No. PR Atau No. SR/MR", value="6/MR-PIE/II/2021")
-    if nomor == "":
-        st.error("Nomor PO/OK Atau PR Atau SR/MR tidak boleh kosong!")
-    else :
-        with st.spinner("Loading Data"):
-            #=============================================#
-            #            STEP 2: Cari di SIMONA           #
-            #=============================================#
-            data_simona = getItemDetail(nomor)
-            if data_simona.shape[0] == 1:
-                index_simona = 0
-            elif data_simona.shape[0] > 1:
-                st.write(data_simona)
-                index_simona = st.selectbox("Index Simona", range(0, data_simona.shape[0]-1))
-            else:
-                data_simona = None
-                index_simona = 0
+    nomor = st.text_input("No. PO/OK atau No. PR atau No. SR/MR", value="085/PB.01.01/LT/III/2020", placeholder="\"CREATE\" untuk memasukan data baru")
+    if nomor.upper() == "CREATE":
+        get_inputs(None, None)
+    else:
+        if nomor == "":
+            st.warning("Masukan Nomor PO/OK atau PR atau SR/MR untuk mencari data")
+            st.warning("Masaukan CREATE untuk menginput data")
+        else :
+            with st.spinner("Loading Data"):
+                #=============================================#
+                #            STEP 2: Cari di SIMONA           #
+                #=============================================#
+                data_simona = getItemDetail(nomor)
+                if data_simona.shape[0] == 1:
+                    index_simona = 0
+                elif data_simona.shape[0] > 1:
+                    st.write(data_simona)
+                    index_simona = st.selectbox("Index Simona", range(0, data_simona.shape[0]-1))
+                else:
+                    data_simona = None
+                    index_simona = 0
 
-            #=============================================#
-            #          STEP 3: Cari di Snowflake          #
-            #=============================================#
-            data_sf = getItemDetailFromData(nomor)
-            st.write(data_sf.iloc[0])
-            if data_simona is not None and data_sf is None:
-                nomor = data_simona["NO_PO"][index_simona]
-            data_sf = getItemDetailFromData(nomor)
-            if data_sf.shape[0] == 1:
-                index = 0
-            elif data_sf.shape[0] > 1:
-                st.write(data_sf)
-                index = st.selectbox("Index Revisi", range(0, data_sf.shape[0]-1))
-            else:
-                data_sf = None
-                index = 0
-            
-            get_inputs(data_sf, data_simona, index, index_simona)
+                #=============================================#
+                #          STEP 3: Cari di Snowflake          #
+                #=============================================#
+                # data_sf = getItemDetailFromData(nomor)
+                # st.write(data_sf.iloc[0])
+                # if data_simona is not None and data_sf is None:
+                #     nomor = data_simona["NO_PO"][index_simona]
+                data_sf = getItemDetailFromData(nomor)
+                if data_sf.shape[0] == 1:
+                    index = 0
+                elif data_sf.shape[0] > 1:
+                    st.write(data_sf)
+                    index = st.selectbox("Index Revisi", range(0, data_sf.shape[0]-1))
+                else:
+                    data_sf = None
+                    index = 0
+
+                if data_simona is None and data_sf is None:
+                    st.error('Input tidak ditemukan, gunakan kata kunci \"CREATE\" untuk menginput data')
+                else:                
+                    get_inputs(data_sf, data_simona, index, index_simona)
 
 def show_report():
     end = date.today()

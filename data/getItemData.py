@@ -64,10 +64,10 @@ def getItemDetail(nomor):
     conn.close()
     return df
 
-def getItemDetailFromData(po):
+def getItemDetailFromData(nomor):
     conn = create_snowflake_connection()
     cursor = conn.cursor()
-    df = getResult(cursor, f"""SELECT * FROM DATASLA WHERE "No. PO/OK" = '{po}'""")
+    df = getResult(cursor, f"""SELECT * FROM DATASLA WHERE "No. PO/OK" = '{nomor}' OR "No. PR" = '{nomor}' OR "No. MR/SR" = '{nomor}'""")
     cursor.close()
     conn.close()
     return df

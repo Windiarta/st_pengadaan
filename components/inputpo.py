@@ -9,19 +9,25 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
     #=============================================#
     #----------------- VAR INIT ------------------#
     #=============================================#
+    st.write("DATA SLA")
+    st.write(data)
+    st.write("SIMONA")
+    st.write(datasimona)
 
     # SET DEFAULT VALUE
     if datasimona is not None:
-        no_mr_sr = datasimona["NO_MR_SR"][0]
-        no_pr = datasimona["NO_PR"][0]
-        no_po = datasimona["NO_PO"][0]
+        no_mr_sr = datasimona["NO_MR_SR"][indexsimona]
+        no_pr = datasimona["NO_PR"][indexsimona]
+        no_po = datasimona["NO_PO"][indexsimona]
     else:
-        no_mr_sr = None
-        no_pr = None
         if data is not None:
-            no_po = data["No. PO/OK"][0]
-        else :
-            no_po = None
+            no_mr_sr = data["No. MR/SR"][index] if data["No. MR/SR"][index] is not None else ''
+            no_pr = data["No. PR"][index] if data["No. PR"][index] is not None else ''
+            no_po = data["No. PO/OK"][index] if data["No. PO/OK"][index] is not None else ''
+        else:
+            no_mr_sr = ''
+            no_pr = ''
+            no_po = ''
     
     # Code dibawah ini berfungsi untuk mengassign data simona dan data
     id_val, date_val, material_val, tender_val, item_val, ka_val, rkap_val, tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val, vendor_val, status_val, poreleased_val, eta_val, bast_val, deliv_val, penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, void_val = get_data_index(data, datasimona, index, indexsimona)
@@ -36,9 +42,9 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         item_name = st.text_input("Item", item_val, placeholder="Item Name")
 
         col1, col2, col3 = st.columns(3)
-        col1.text_input("No. MR/SR", no_mr_sr, disabled=True)
-        col2.text_input("No. PR", no_pr, disabled=True)
-        col3.text_input("No. PO/OK", no_po, disabled=True)
+        newmr = col1.text_input("No. MR/SR", no_mr_sr, disabled=datasimona is not None, placeholder="No. MR/SR")
+        newpr = col2.text_input("No. PR", no_pr, disabled=datasimona is not None, placeholder="No. PR")
+        newpo = col3.text_input("No. PO/OK", no_po, disabled=datasimona is not None, placeholder="No. PO/OK")
 
         col1, col2 = st.columns([1, 2])
         with col1: 
@@ -187,33 +193,40 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         
         col1, col2, col3, col4 = st.columns([4, 1, 1, 1])
         with col1:
-            if material_service == "VOID":
-                status_tender = st.selectbox("Status Tender (VOID)", ["None", "Retender", "Cancelled"])
-            else :
-                status_tender = st.selectbox("Status Tender (VOID)", "None", disabled=True)
+            status_tender = st.selectbox("Status Tender (VOID)", ["None", "Retender", "Cancelled"], disabled=material_service!="VOID")
         with col2 : workday = st.text_input("Work Day", countWorkDay(start=sr_mr, end=pook), disabled=True)
         with col3 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
-        with col4 : slastat = st.text_input("Status", "RUMUSING", disabled=True)
+        with col4 : slastat = st.text_input("Status", calculateSLA(tender_val, int (workday)), disabled=True)
         remarks = st.text_area("Remarks", placeholder="Remarks")
             
-        if data is not None:
-            update = st.button("Update")
-            if update :
-                updateDataSLA(
-                    id, selected_date, material_service, item_name, ka, rkap,
-                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
-                            po_sched, po_released, eta, bast, delivtime, penalty, no_po, oe, 
-                            pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
-                            ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
-                            awarding, actualday, slastat, remarks)
-        else :
+        if data is None:
             create = st.button("Create")
-            if create:
-                insertDataSLA(
-                    selected_date, material_service, item_name, ka, rkap,
-                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, 
-                            po_sched, po_released, eta, bast, delivtime, penalty, no_po, oe, 
-                            pook_v, realization, saving, other, other2, file_loc, forecast, cumulative,
-                            ir, a, tender, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, final_harga, rekomendasi, 
-                            awarding, actualday, slastat, remarks)
-    
+            update = False
+            
+        if data is not None:
+            create = st.button("Create")
+            update = st.button("Update")
+        
+        if create :
+            if (newmr != '' and newpr != '' and newpo != ''):
+                with st.spinner("Inserting Data"):
+                    insertDataSLA(
+                        selected_date, material_service, item_name, ka, rkap,
+                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
+                            po_released, eta, bast, delivtime, penalty, newpo, oe, 
+                            pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
+                            final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
+            else :
+                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
+                
+        if update : 
+            if (newmr != '' and newpr != '' and newpo != ''):
+                with st.spinner("Updating Data"):
+                    updateDataSLA(
+                        id, selected_date, material_service, item_name, ka, rkap,
+                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
+                            po_released, eta, bast, delivtime, penalty, newpo, oe, 
+                            pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
+                            final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
+            else :
+                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")

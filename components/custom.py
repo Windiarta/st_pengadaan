@@ -39,3 +39,26 @@ def countActualDay(start, end):
         return 0
     else :
         return (end - start).days
+    
+def getSLA(tender):
+    if tender == "Tender Umum":
+        return 90
+    elif tender == "Tender Terbatas":
+        return 80
+    elif tender == "Pemilihan Langsung":
+        return 40
+    elif tender == "Penunjukan Langsung":
+        return 30
+    elif tender == "Pengadaan Langsung":
+        return 28
+    else :
+        return 0
+    
+def calculateSLA(tender, workday):
+    SLA = getSLA(tender)
+    if workday > SLA:
+        return "LATE"
+    elif workday < SLA:
+        return "AHEAD"
+    else:
+        return "ON TIME"

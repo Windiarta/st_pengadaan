@@ -43,42 +43,40 @@ def get_data_index(data, datasimona, index, indexsimona):
                 tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val,
                 vendor_val, status_val, poreleased_val, eta_val, bast_val, deliv_val, 
                 penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, void_val)
-    # elif datasimona is not None and data is None:
-    #     # Gunakan data Simona
-    #     # id_val = datasimona["ID"][indexsimona]
-    #     date_val = datasimona["PR Month"][indexsimona]
-    #     material_val = datasimona["Material/Services"][indexsimona]
-    #     # tender_val = datasimona["Status Tender"][indexsimona]
-    #     item_val = datasimona["Item"][indexsimona]
-    #     # ka_val = datasimona["K/A"][indexsimona]
-    #     # rkap_val = datasimona["RKAP"][indexsimona]
-    #     # tpn_val = datasimona["TA/Punchlist/Normal"][indexsimona]
-    #     # coa_val = datasimona["COA"][indexsimona]
-    #     # discipline_val = datasimona["Discipline"][indexsimona]
-    #     # eproc_val = datasimona["E-Proc/PaDi/Normal"][indexsimona]
-    #     # dur_val = datasimona["No. DUR"][indexsimona]
-    #     # sap_val = datasimona["SAP/Non"][indexsimona]
-    #     # user_val = datasimona["User Name"][indexsimona]
-    #     # vendor_val = datasimona["Vendor Name"][indexsimona]
-    #     # status_val = datasimona["Status"][indexsimona]
-    #     # deliv_val = datasimona["Delivery Time"][indexsimona]
-    #     # penalty_val = datasimona["Penalty/N"][indexsimona]
-    #     # oe_val = datasimona["OE"][indexsimona]
-    #     # pook_val = datasimona["PO/OK"][indexsimona]
-    #     # realization_val = datasimona["Realization"][indexsimona]
-    #     # saving_val = datasimona["Saving"][indexsimona]
-    #     # other_val = datasimona["Other"][indexsimona]
-    #     # other2_val = datasimona["Other 2"][indexsimona]
-    #     # file_loc_val = datasimona["File Location"][indexsimona]
-    #     # forecast_val = datasimona["Forecast Realization"][indexsimona]
-    #     # cumulative_val = datasimona["Cumulative FR"][indexsimona]
-    #     # ir_val = datasimona["IR Realization"][indexsimona]
-    #     # a_val = datasimona["A"][indexsimona]
-    #     return (id_val, date_val, material_val, tender_val, item_val, ka_val, rkap_val,
-    #             tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val,
-    #             vendor_val, status_val, deliv_val, penalty_val, oe_val, pook_val,
-    #             realization_val, saving_val, other_val, other2_val, file_loc_val,
-    #             forecast_val, cumulative_val, ir_val, a_val)
+    elif datasimona is not None and data is None:
+        # Gunakan data Simona
+        date_val = datasimona["PR Month"][indexsimona]
+        material_val = datasimona["Material/Services"][indexsimona]
+        # tender_val = datasimona["Status Tender"][indexsimona]
+        item_val = datasimona["Item"][indexsimona]
+        # ka_val = datasimona["K/A"][indexsimona]
+        # rkap_val = datasimona["RKAP"][indexsimona]
+        # tpn_val = datasimona["TA/Punchlist/Normal"][indexsimona]
+        # coa_val = datasimona["COA"][indexsimona]
+        # discipline_val = datasimona["Discipline"][indexsimona]
+        # eproc_val = datasimona["E-Proc/PaDi/Normal"][indexsimona]
+        # dur_val = datasimona["No. DUR"][indexsimona]
+        # sap_val = datasimona["SAP/Non"][indexsimona]
+        # user_val = datasimona["User Name"][indexsimona]
+        # vendor_val = datasimona["Vendor Name"][indexsimona]
+        # status_val = datasimona["Status"][indexsimona]
+        # deliv_val = datasimona["Delivery Time"][indexsimona]
+        # penalty_val = datasimona["Penalty/N"][indexsimona]
+        # oe_val = datasimona["OE"][indexsimona]
+        # pook_val = datasimona["PO/OK"][indexsimona]
+        # realization_val = datasimona["Realization"][indexsimona]
+        # saving_val = datasimona["Saving"][indexsimona]
+        # other_val = datasimona["Other"][indexsimona]
+        # other2_val = datasimona["Other 2"][indexsimona]
+        # file_loc_val = datasimona["File Location"][indexsimona]
+        # forecast_val = datasimona["Forecast Realization"][indexsimona]
+        # cumulative_val = datasimona["Cumulative FR"][indexsimona]
+        # ir_val = datasimona["IR Realization"][indexsimona]
+        # a_val = datasimona["A"][indexsimona]
+        return (id_val, date_val, material_val, tender_val, item_val, ka_val, rkap_val,
+                tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val,
+                vendor_val, status_val, poreleased_val, eta_val, bast_val, deliv_val, 
+                penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, void_val)
     elif datasimona is None and data is not None:
         # Gunakan data data
         id_val = data["ID"][index]
@@ -113,5 +111,5 @@ def get_data_index(data, datasimona, index, indexsimona):
                 vendor_val, status_val, poreleased_val, eta_val, bast_val, deliv_val, 
                 penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, void_val)
     else:
-        st.warning("Tidak ada data, Isi untuk menginput data baru")
+        st.header("INPUT DATA BARU")
         return set_default()
