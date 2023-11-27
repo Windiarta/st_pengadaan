@@ -85,16 +85,16 @@ def getKAOption(cursor):
     return getResult(cursor, f"""SELECT DISTINCT("K/A") AS m FROM DROPDOWN WHERE m IS NOT NULL""")
 
 def getJenisKebutuhan(cursor):
-    return getResult(cursor, f"""SELECT DISTINCT("Jenis Kebutuhan") AS m FROM DROPDOWN WHERE m IS NOT NULL""")
+    return getResult(cursor, f"""SELECT DISTINCT("Jenis Kebutuhan") AS m FROM DROPDOWN""")
 
 def getCOAOption(cursor):
-    return getResult(cursor, f"""SELECT DISTINCT("COA") AS m FROM DROPDOWN WHERE m IS NOT NULL""")
+    return getResult(cursor, f"""SELECT DISTINCT("COA") AS m FROM DROPDOWN""")
 
 def getDisciplineOption(cursor):
-    return getResult(cursor, f"""SELECT DISTINCT("Discipline") AS m FROM DROPDOWN WHERE m IS NOT NULL""")
+    return getResult(cursor, f"""SELECT DISTINCT("Discipline") AS m FROM DROPDOWN""")
 
 def getSapOption(cursor):
-    return getResult(cursor, f"""SELECT DISTINCT("SAP/Non") AS m FROM DROPDOWN WHERE m IS NOT NULL""")
+    return getResult(cursor, f"""SELECT DISTINCT("SAP/Non") AS m FROM DROPDOWN""")
 
 def getEprocOption(cursor):
     return getResult(cursor, f"""SELECT DISTINCT("E-Proc/PaDi/Normal") AS m FROM DROPDOWN WHERE m IS NOT NULL""")

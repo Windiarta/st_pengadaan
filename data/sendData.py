@@ -41,13 +41,11 @@ def insertDataSLA(prmonth='', material='', item='', ka='', rkap='', ta='', coa='
 
 
 def updateDataSLA(id_value, prmonth='', material='', item='', ka='', rkap='', ta='', coa='', disc='',
-        eproc='', dur='', sap='', user='', vendor='', status='', jenis='', posched=None, 
+        eproc='', dur='', sap='', user='', vendor='', status='', jenis='', 
         porelease=None, eta=None, bast=None, deliv='', penal='', nopook='', oe='', pook='',
-        real='', save='', other='', other2='', file='', forecast='', cumu='', ir='', a='',
-        tender='', created=None, verify=None, izin=None, rfq=None, penawaran=None, tbe=None, 
+        real='', save='', other='', tender='', created=None, verify=None, izin=None, rfq=None, penawaran=None, tbe=None, 
         klarif=None, pooksla=None, final=None, rekom=None, awarding=None, actualday='', 
         slastat='', remarks=''):
-    posched = 'NULL' if posched is None else f"'{posched}'"
     porelease = 'NULL' if porelease is None else f"'{porelease}'"
     eta = 'NULL' if eta is None else f"'{eta}'"
     bast = 'NULL' if bast is None else f"'{bast}'"
@@ -80,7 +78,6 @@ def updateDataSLA(id_value, prmonth='', material='', item='', ka='', rkap='', ta
             "Vendor Name" = '{vendor}', 
             "Status" = '{status}', 
             "Jenis Tender" = '{jenis}', 
-            "PO Scheduled" = {posched}, 
             "PO Released" = {porelease}, 
             ETA = {eta}, 
             BAST = {bast}, 
@@ -92,13 +89,8 @@ def updateDataSLA(id_value, prmonth='', material='', item='', ka='', rkap='', ta
             "Realization" = '{real}', 
             "Saving" = '{save}', 
             "Other" = '{other}', 
-            "Other 2" = '{other2}', 
-            "File Location" = '{file}', 
-            "Forecast Realization" = '{forecast}', 
-            "Cumulative FR" = '{cumu}', 
-            "IR Realization" = '{ir}', 
-            A = '{a}',
-            "Status Tender" = '{tender}', 
+            "Jenis Tender" = '{tender}',
+            "Status Void" = '{status_void}', 
             "Created SR/MR" = {created}, 
             "PR Verified by Daan" = {verify}, 
             "Izin Prinsip" = {izin}, 

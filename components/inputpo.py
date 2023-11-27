@@ -24,7 +24,7 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
             no_po = None
     
     # Code dibawah ini berfungsi untuk mengassign data simona dan data
-    id, date_val, material_val, tender_val, item, ka_val, rkap_val, tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val, vendor_val, status_val, deliv_val, penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, other2_val, file_loc_val, forecast_val, cumulative_val, ir_val, a_val = get_data_index(data, datasimona, index, indexsimona)
+    id_val, date_val, material_val, tender_val, item_val, ka_val, rkap_val, tpn_val, coa_val, discipline_val, eproc_val, dur_val, sap_val, user_val, vendor_val, status_val, poreleased_val, eta_val, bast_val, deliv_val, penalty_val, oe_val, pook_val, realization_val, saving_val, other_val, void_val = get_data_index(data, datasimona, index, indexsimona)
     
     #=============================================#
     #------------------- DATA --------------------#
@@ -33,7 +33,7 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         st.divider()
         st.header("DATA")
 
-        item_name = st.text_input("Item", item, placeholder="Item Name")
+        item_name = st.text_input("Item", item_val, placeholder="Item Name")
 
         col1, col2, col3 = st.columns(3)
         col1.text_input("No. MR/SR", no_mr_sr, disabled=True)
@@ -68,27 +68,32 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         with col3:
             sap = st.selectbox("SAP/Non", sap_option, index=tuple(sap_option["M"]).index(sap_val))
 
+        vdr_index = vendor_val if vendor_val in vendor_option else None
+        if vdr_index == vendor_val:
+            col1, col2 = st.columns(2)
+            user = col1.text_input("User Name", user_val, placeholder="User Name")
+            vendor = col2.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(vdr_index))
+        else:
+            col1, col2, col3 = st.columns(3)
+            user = col1.text_input("User Name", user_val, placeholder="User Name")
+            col2.write(vendor_val)
+            vendor = col3.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(None), placeholder=vendor_val)
+
         col1, col2 = st.columns(2)
         with col1: 
-            user = st.selectbox("User Name", user_option, index=tuple(user_option["M"]).index(user_val))
             tender = st.selectbox("Metode Tender", metode_tender_option, index=tuple(metode_tender_option["M"]).index(tender_val))
         with col2:
-            vendor = st.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(vendor_val))
             status = st.text_input("Status", status_val, placeholder="Status")
 
-        col1, col2, col3, col4 = st.columns(4)
+        col2, col3, col4 = st.columns(3)
         if data is not None:
-            with col1:
-                po_sched = getDate("PO Scheduled", data["PO Scheduled"][0])
             with col2:
-                po_released = getDate("PO Released", data["PO Released"][0])
+                po_released = getDate("PO Released", poreleased_val)
             with col3:
-                eta = getDate("ETA", data["ETA"][0])
+                eta = getDate("ETA", eta_val)
             with col4:
-                bast = getDate("BAST", data["BAST"][0])
+                bast = getDate("BAST", bast_val)
         else :
-            with col1:
-                po_sched = getDate("PO Scheduled")
             with col2:
                 po_released = getDate("PO Released")
             with col3:
@@ -100,7 +105,11 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         with col1:
             delivtime = st.text_input("Delivery Time", deliv_val, placeholder="Delivery Time")
         with col2:
-            penalty = st.text_input("Penalty", penalty_val, placeholder="Penalty")
+            try:
+                penalty_val = countActualDay(eta, bast if bast is not None else today)
+            except:
+                st.write(penalty_val)
+            penalty = st.text_input("Penalty (BAST - ETA)", penalty_val, placeholder="Penalty")
 
         col1, col2, col3, col4 = st.columns(4)
         with col1:
@@ -112,21 +121,8 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         with col4:
             saving = st.number_input("Saving", value=int(saving_val if saving_val is not None else 0), step=1000)
 
-        col1, col2 = st.columns([2,1])
-        with col1:
-            other = st.text_input("Other", other_val, placeholder="Other")
-            file_loc = st.text_input("File Location", file_loc_val, placeholder="File Location")
-        with col2:
-            other2 = st.text_input("Other 2", other2_val, placeholder="Other 2")
-            forecast = st.text_input("Forecast Realization", forecast_val, placeholder="Forecast Realization")
+        other = st.text_area("Other", other_val, placeholder="Other")
         
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            cumulative = st.text_input("Cumulative FR", cumulative_val, placeholder="Cumulative FR")
-        with col2:
-            ir = st.text_input("IR Realization", ir_val, placeholder="IR Realization")
-        with col3:
-            a = st.text_input("A", a_val, placeholder="A")
 
     #===========================================#
     #------------------- SLA -------------------#
@@ -136,20 +132,28 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         st.divider()
         st.header("SLA")
         st.write("Anda hanya dapat mengubah no.1, 2, 11 di SAP")
-        # if "RETENDER" in tender:
-        #     st.selectbox("Retender Start From", ["Created SR/MR", "PR Verified", "Izin Prinsip"])
+        st.write(datasimona)
         if data is not None:
             col1, col2, col3 = st.columns(3)
             with col1:
-                sr_mr = getDate("1 Created SR/MR", datasimona["Created SR/MR"][0], disabled=True)
+                if datasimona is not None:
+                    sr_mr = getDate("1 Created SR/MR", datasimona["Created SR/MR"][0], disabled=True)
+                else :
+                    sr_mr = getDate("1 Created SR/MR", data["Created SR/MR"][0])
                 rfq = getDate("4 RFQ", data["RFQ"][0])
                 nego = getDate("7 Klarifikasi & Negosiasi", data["Klarifikasi & Negosiasi"][0])
                 awarding = getDate("10 Awarding", data["Awarding"][0])
             with col2:
-                pr_verif = getDate("2 PR Verified by Daan", datasimona["PR Verified by Daan"][0], disabled=True)
+                if datasimona is not None:
+                    pr_verif = getDate("2 PR Verified by Daan", datasimona["PR Verified by Daan"][0], disabled=True)
+                else :
+                    pr_verif = getDate("2 PR Verified by Daan", data["PR Verified by Daan"][0])
                 offer = getDate("5 Penawaran Diterima", data["Penawaran diterima"][0])
                 final_harga = getDate("8 Final Harga", data["Final Harga"][0])
-                pook = getDate("11 PO/OK", datasimona["PO_OK_SLA"][0], disabled=True)
+                if datasimona is not None:
+                    pook = getDate("11 PO/OK", datasimona["PO_OK_SLA"][0], disabled=True)
+                else:
+                    pook = getDate("11 PO/OK", data["PO_OK_SLA"][0])
             with col3:
                 izin_prinsip = getDate("3 Izin Prinsip", data["Izin Prinsip"][0])
                 tbe = getDate("6 TBE Diterima", data["TBE diterima"][0])
@@ -180,11 +184,17 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
                 tbe = getDate("6 TBE Diterima")
                 rekomendasi = getDate("9 Rekomendasi PR")
         
-        col1, col2, col3, col4 = st.columns([1,1,1,6])
-        with col1 : workday = st.text_input("Work Day", countWorkDay(start=sr_mr, end=pook), disabled=True)
-        with col2 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
-        with col3 : slastat = st.text_input("Status", "RUMUSING", disabled=True)
-        with col4 : remarks = st.text_input("Remarks", placeholder="Remarks")
+        
+        col1, col2, col3, col4 = st.columns([4, 1, 1, 1])
+        with col1:
+            if material_service == "VOID":
+                status_tender = st.selectbox("Status Tender (VOID)", ["None", "Retender", "Cancelled"])
+            else :
+                status_tender = st.selectbox("Status Tender (VOID)", "None", disabled=True)
+        with col2 : workday = st.text_input("Work Day", countWorkDay(start=sr_mr, end=pook), disabled=True)
+        with col3 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
+        with col4 : slastat = st.text_input("Status", "RUMUSING", disabled=True)
+        remarks = st.text_area("Remarks", placeholder="Remarks")
             
         if data is not None:
             update = st.button("Update")

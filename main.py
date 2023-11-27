@@ -32,6 +32,7 @@ def show_form():
             #          STEP 3: Cari di Snowflake          #
             #=============================================#
             data_sf = getItemDetailFromData(nomor)
+            st.write(data_sf.iloc[0])
             if data_simona is not None and data_sf is None:
                 nomor = data_simona["NO_PO"][index_simona]
             data_sf = getItemDetailFromData(nomor)
