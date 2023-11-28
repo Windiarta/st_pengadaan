@@ -1,6 +1,9 @@
 from modules.connection import create_snowflake_connection
 import pandas as pd
+import streamlit as st
 
+# TODO nanti st.cache mau dihapus
+@st.cache_data(show_spinner=False, ttl="10s")
 def getItemDetail(nomor):
     conn = create_snowflake_connection()
     cursor = conn.cursor()
@@ -87,6 +90,7 @@ def getItemDetail(nomor):
     conn.close()
     return df
 
+@st.cache_data(show_spinner=False, ttl="10s")
 def getItemDetailFromData(nomor):
     conn = create_snowflake_connection()
     cursor = conn.cursor()

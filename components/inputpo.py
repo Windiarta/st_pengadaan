@@ -215,6 +215,7 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
                             pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
                             final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
                 
+                
         if update : 
             # if (newmr == '' and newpr == '' and newpo == ''):
             #     st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
@@ -226,4 +227,4 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
                             po_released, eta, bast, delivtime, penalty, newpo, oe, 
                             pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
                             final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
-                
+                    

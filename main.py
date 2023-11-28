@@ -10,7 +10,7 @@ header()
 #             STEP 1: Ambil Nomor             #
 #=============================================#
 def show_form():
-    nomor = st.text_input("No. PO/OK atau No. PR atau No. SR/MR atau ID Data", placeholder="\"CREATE\" untuk memasukan data baru")
+    nomor = st.text_input("No. PO/OK atau No. PR atau No. SR/MR atau (ID Data tidak terintegrasi SIMONA)", placeholder="\"CREATE\" untuk memasukan data baru")
     if nomor.upper() == "CREATE":
         get_inputs(None, None)
     else:
