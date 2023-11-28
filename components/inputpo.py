@@ -189,8 +189,7 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         
         
         col1, col2, col3, col4 = st.columns([4, 1, 1, 1])
-        with col1:
-            status_tender = st.selectbox("Status Tender (VOID)", void_option, disabled=material_service!="VOID")
+        with col1 : status_tender = st.selectbox("Status Tender (VOID)", void_option, disabled=material_service!="VOID")
         with col2 : workday = st.text_input("Work Day", countWorkDay(start=sr_mr, end=pook), disabled=True)
         with col3 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
         with col4 : slastat = st.text_input("Status", calculateSLA(tender_val, int (workday)), disabled=True)
