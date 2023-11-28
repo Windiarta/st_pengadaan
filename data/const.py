@@ -23,5 +23,6 @@ with st.spinner("Please Wait"):
     eproc_option = getEprocOption(cursor)
     user_option = getUserOption(cursor)
     vendor_option = getVendorOption(cursor)
+    void_option = ["None", "Retender", "Cancelled"]
     cursor.close()
     conn.close()

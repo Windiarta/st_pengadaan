@@ -70,21 +70,19 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         with col1:
             eproc = st.selectbox("E-Proc/PaDi/Normal", eproc_option, index=tuple(eproc_option["M"]).index(eproc_val))
         with col2:
-            dur = st.text_input("No. DUR", dur_val, placeholder="No. DUR")
+            dur = st.text_input("No. DUR", dur_val if dur_val is not None else '', placeholder="No. DUR")
         with col3:
             sap = st.selectbox("SAP/Non", sap_option, index=tuple(sap_option["M"]).index(sap_val))
 
-        vdr_index = vendor_val if vendor_val in vendor_option else None
-        if vdr_index == vendor_val:
-            col1, col2 = st.columns(2)
-            user = col1.text_input("User Name", user_val, placeholder="User Name")
-            vendor = col2.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(vdr_index))
-        else:
-            col1, col2, col3 = st.columns(3)
-            user = col1.text_input("User Name", user_val, placeholder="User Name")
-            col2.write(vendor_val)
-            vendor = col3.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(None), placeholder=vendor_val)
-
+        col1, col2 = st.columns([1, 3])
+        user = col1.text_input("User Name", user_val, placeholder="User Name")
+        try:
+            vendor = col2.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(vendor_val))
+        except:
+            col21, col22 = col2.columns([1, 2])
+            col21.write(vendor_val)
+            vendor = col22.selectbox("Vendor Name", vendor_option, index=tuple(vendor_option["M"]).index(None), placeholder=vendor_val)
+            
         col1, col2 = st.columns(2)
         with col1: 
             tender = st.selectbox("Metode Tender", metode_tender_option, index=tuple(metode_tender_option["M"]).index(tender_val))
@@ -138,7 +136,6 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         st.divider()
         st.header("SLA")
         st.write("Anda hanya dapat mengubah no.1, 2, 11 di SAP")
-        st.write(datasimona)
         if data is not None:
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -193,7 +190,7 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         
         col1, col2, col3, col4 = st.columns([4, 1, 1, 1])
         with col1:
-            status_tender = st.selectbox("Status Tender (VOID)", ["None", "Retender", "Cancelled"], disabled=material_service!="VOID")
+            status_tender = st.selectbox("Status Tender (VOID)", void_option, disabled=material_service!="VOID")
         with col2 : workday = st.text_input("Work Day", countWorkDay(start=sr_mr, end=pook), disabled=True)
         with col3 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
         with col4 : slastat = st.text_input("Status", calculateSLA(tender_val, int (workday)), disabled=True)
@@ -204,11 +201,13 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
             update = False
             
         if data is not None:
-            create = st.button("Create")
+            create = st.button("Create", disabled=True)
             update = st.button("Update")
         
         if create :
-            if (newmr != '' and newpr != '' and newpo != ''):
+            if (newmr == '' and newpr == '' and newpo == ''):
+                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
+            else:
                 with st.spinner("Inserting Data"):
                     insertDataSLA(
                         selected_date, material_service, item_name, ka, rkap,
@@ -216,17 +215,16 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
                             po_released, eta, bast, delivtime, penalty, newpo, oe, 
                             pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
                             final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
-            else :
-                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
                 
         if update : 
-            if (newmr != '' and newpr != '' and newpo != ''):
+            # if (newmr == '' and newpr == '' and newpo == ''):
+            #     st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
+            # else:
                 with st.spinner("Updating Data"):
                     updateDataSLA(
-                        id, selected_date, material_service, item_name, ka, rkap,
+                        id_val, selected_date, material_service, item_name, ka, rkap,
                             tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
                             po_released, eta, bast, delivtime, penalty, newpo, oe, 
                             pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
                             final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
-            else :
-                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
+                
