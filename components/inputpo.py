@@ -9,11 +9,15 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
     #=============================================#
     #----------------- VAR INIT ------------------#
     #=============================================#
-    st.write("DATA SLA")
+    st.write("DATA MANUAL")
     st.write(data)
     st.write("SIMONA")
     st.write(datasimona)
 
+    #=============================================#
+    #--------------- FORM SECTION ----------------#
+    #=============================================#
+    
     # SET DEFAULT VALUE
     if datasimona is not None:
         no_mr_sr = datasimona["NO_MR_SR"][indexsimona]
@@ -36,7 +40,6 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
     #------------------- DATA --------------------#
     #=============================================#
     with st.spinner("Loading Data"):
-        st.divider()
         st.header("DATA")
 
         item_name = st.text_input("Item", item_val, placeholder="Item Name")
@@ -194,37 +197,31 @@ def get_inputs(data, datasimona, index=0, indexsimona=0):
         with col3 : actualday = st.text_input("Actual Day", countActualDay(start=sr_mr, end=pook), disabled=True)
         with col4 : slastat = st.text_input("Status", calculateSLA(tender_val, int (workday)), disabled=True)
         remarks = st.text_area("Remarks", placeholder="Remarks")
-            
+
         if data is None:
             create = st.button("Create")
             update = False
             
         if data is not None:
-            create = st.button("Create", disabled=True)
+            create = st.button("Create")
             update = st.button("Update")
         
         if create :
-            if (newmr == '' and newpr == '' and newpo == ''):
-                st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
-            else:
-                with st.spinner("Inserting Data"):
-                    insertDataSLA(
-                        selected_date, material_service, item_name, ka, rkap,
-                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
-                            po_released, eta, bast, delivtime, penalty, newpo, oe, 
-                            pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
-                            final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
+            with st.spinner("Inserting Data"):
+                insertDataSLA(
+                    selected_date, material_service, item_name, ka, rkap,
+                        tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
+                        po_released, eta, bast, delivtime, penalty, newpo, oe, 
+                        pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
+                        final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
                 
-                
+            
         if update : 
-            # if (newmr == '' and newpr == '' and newpo == ''):
-            #     st.error("Isi Nomor MR/SR, Nomor PR, atau Nomor PO/OK agar dapat menginput data")
-            # else:
-                with st.spinner("Updating Data"):
-                    updateDataSLA(
-                        id_val, selected_date, material_service, item_name, ka, rkap,
-                            tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
-                            po_released, eta, bast, delivtime, penalty, newpo, oe, 
-                            pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
-                            final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
-                    
+            with st.spinner("Updating Data"):
+                updateDataSLA(
+                    id_val, selected_date, material_service, item_name, ka, rkap,
+                        tpn, coa, discipline, eproc, dur, sap, user, vendor, status, tender, status_tender,
+                        po_released, eta, bast, delivtime, penalty, newpo, oe, 
+                        pook_v, realization, saving, other, sr_mr, pr_verif, izin_prinsip, rfq, offer, tbe, nego, pook, 
+                        final_harga, rekomendasi, awarding, actualday, slastat, remarks, newmr, newpr)
+                
