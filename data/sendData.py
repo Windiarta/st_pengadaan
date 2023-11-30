@@ -15,13 +15,13 @@ def insertDataSLA(prmonth='', material='', item='', ka='', rkap='', ta='', coa='
             porelease=None, eta=None, bast=None, deliv='', penal='', nopook=None, oe='', pook='',
             real='', save='', other='', created=None, verify=None, izin=None, rfq=None, penawaran=None, tbe=None, 
             klarif=None, pooksla=None, final=None, rekom=None, awarding=None, actualday='', 
-            slastat='', remarks='', no_mr_sr=None, no_pr=None):
+            slastat='', remarks='', no_mr_sr=None, no_pr=None, workday=0):
     query = f"""
     INSERT INTO PENGADAAN.PUBLIC.DATASLA ( "PR Month", "Material/Services", "Item", "K/A", RKAP, "TA/Punchlist/Normal", COA, 
     "Discipline", "E-Proc/PaDi/Normal", "No. DUR", "SAP/Non", "User Name", "Vendor Name", "Status", "Jenis Tender", "Status Void", 
     "PO Released", ETA, BAST, "Delivery Time", "Penalty/N", "No. PO/OK", OE, "PO/OK", "Realization", "Saving", "Other", "Created SR/MR", "PR Verified by Daan", 
     "Izin Prinsip", RFQ, "Penawaran diterima", "TBE diterima", "Klarifikasi & Negosiasi", "Rekomendasi PR", "Awarding", PO_OK_SLA, 
-    "Actual Day Hari Kalender", "Final Harga", STATUS_SLA, "REMARKS", "CREATED_AT", "No. MR/SR", "No. PR" ) VALUES 
+    "Actual Day Hari Kalender", "Final Harga", STATUS_SLA, "REMARKS", "CREATED_AT", "No. MR/SR", "No. PR", workday) VALUES 
     (
         '{prmonth}', '{material}', '{item}', '{ka}', '{rkap}', '{ta}', '{coa}', '{disc}',
         '{eproc}', '{dur}', '{sap}', '{user}', '{vendor}', '{status}', '{jenis}', '{void}',
@@ -32,7 +32,7 @@ def insertDataSLA(prmonth='', material='', item='', ka='', rkap='', ta='', coa='
         {'NULL' if tbe is None else f"'{tbe}'"}, {'NULL' if klarif is None else f"'{klarif}'"},
         {'NULL' if rekom is None else f"'{rekom}'"}, {'NULL' if awarding is None else f"'{awarding}'"}, 
         {'NULL' if pooksla is None else f"'{pooksla}'"}, '{actualday}', {'NULL' if final is None else f"'{final}'"}, '{slastat}', '{remarks}',
-        '{today}', {'NULL' if no_mr_sr == '' else f"'{no_mr_sr}'"}, {'NULL' if no_pr == '' else f"'{no_pr}'"}
+        '{today}', {'NULL' if no_mr_sr == '' else f"'{no_mr_sr}'"}, {'NULL' if no_pr == '' else f"'{no_pr}'"}, {workday}
     );
     """
     execQuery(query)
@@ -44,7 +44,7 @@ def updateDataSLA(id_value, prmonth='', material='', item='', ka='', rkap='', ta
             porelease=None, eta=None, bast=None, deliv='', penal='', nopook='', oe='', pook='',
             real='', save='', other='', created=None, verify=None, izin=None, rfq=None, penawaran=None, tbe=None, 
             klarif=None, pooksla=None, final=None, rekom=None, awarding=None, actualday='', 
-            slastat='', remarks='', no_mr_sr='', no_pr=''):
+            slastat='', remarks='', no_mr_sr='', no_pr='', workday=0):
     porelease = 'NULL' if porelease is None else f"'{porelease}'"
     eta = 'NULL' if eta is None else f"'{eta}'"
     bast = 'NULL' if bast is None else f"'{bast}'"
@@ -104,6 +104,7 @@ def updateDataSLA(id_value, prmonth='', material='', item='', ka='', rkap='', ta
             STATUS_SLA = '{slastat}', 
             "REMARKS" = '{remarks}',
             "No. MR/SR" = '{no_mr_sr}', 
-            "No. PR" = '{no_pr}'
+            "No. PR" = '{no_pr}',
+            workday = {workday}
         WHERE ID = {id_value};"""
     execQuery(query)

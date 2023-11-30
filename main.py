@@ -52,17 +52,26 @@ def show_form():
                 if data_simona is None and data_sf is None:
                     st.error('Input tidak ditemukan, gunakan kata kunci \"CREATE\" untuk menginput data')
                 else:                
-                    get_inputs(data_sf, data_simona, index, index_simona)
+                    success = get_inputs(data_sf, data_simona, index, index_simona)
+                    if success:
+                        st.success("Aksi berhasil")
 
 def show_report():
     end = date.today()
-    col1, col2 = st.columns(2)
-    with col1:
-        start = st.date_input("Pilih Tanggal Awal", max_value=end)
-    with col2:
-        end = st.date_input("Pilih Tanggal Akhir", min_value=start, max_value=date.today())
-    report_data = get_report_data(start, end)
-    st.write(report_data)
+    with st.form("Report"):
+        col1, col2 = st.columns(2)
+        with col1:
+            start = st.date_input("Pilih Tanggal Awal", max_value=end)
+        with col2:
+            end = st.date_input("Pilih Tanggal Akhir", min_value=start)
+        report_data = get_report_data(start, end)
+        show = st.form_submit_button("Show Data")
+    if show : 
+        if report_data is not None:
+            st.write(report_data)
+            st.download_button("Download CSV", report_data.to_csv().encode('utf-8'), file_name=f"report_{start}_{end}.csv", mime='text/csv')
+        else:
+            st.write("Tidak ada data")
 
 tab1, tab2 = st.tabs(["Form", "Report"])
 with tab1:
