@@ -134,7 +134,7 @@ def getUserOption(cursor):
     return getResult(cursor, f"""SELECT DISTINCT("User") AS m FROM DROPDOWN""")
 
 def get_report_data(start, end):
-    return getResult(None, f"""SELECT * FROM DATASLA1 WHERE CREATED_AT BETWEEN '{start}' AND '{end}'""")
+    return getResult(None, f"""SELECT * FROM DATASLA WHERE CREATED_AT BETWEEN '{start}' AND '{end}'""")
 
     
 def getResult(cursor=None, query=None):

@@ -15,14 +15,14 @@ def header():
 def getDate(label, date = None, disabled = False):
     if date is not None:
         box = st.checkbox(label, True, disabled=disabled)
-        selected = st.date_input(label, date, label_visibility="collapsed", disabled=disabled or not box, format="DD-MM-YYYY")
+        selected = st.date_input(label, date, label_visibility="collapsed", disabled=disabled, format="DD-MM-YYYY")
         if box:
             return selected
         else :
             return None
     else: 
         box = st.checkbox(label, False)
-        selected = st.date_input(label, None, label_visibility="collapsed", disabled=not box, format="DD-MM-YYYY")
+        selected = st.date_input(label, None, label_visibility="collapsed", format="DD-MM-YYYY")
         if box:
             return selected
         else :
